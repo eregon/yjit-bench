@@ -1,6 +1,7 @@
 benchmarks = ENV['BENCHMARKS'] ? ENV['BENCHMARKS'].split : ARGV
 if benchmarks.empty?
-  benchmarks = Dir["benchmarks/*.rb"].sort + Dir["benchmarks/*/benchmark.rb"].sort
+  # benchmarks = Dir["benchmarks/*.rb"].sort + Dir["benchmarks/*/benchmark.rb"].sort
+  benchmarks = Dir["benchmarks/*/benchmark.rb"].sort # only macros
 end
 
 exclude = (ENV['EXCLUDE'] || 'jekyll').split(',')

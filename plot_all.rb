@@ -1,6 +1,7 @@
 macros = Dir["benchmarks/*/benchmark.rb"].sort
 micros = Dir["benchmarks/*.rb"].sort
-benchmarks = macros + micros + ['benchmarks/geomean.rb']
+# benchmarks = macros + micros + ['benchmarks/geomean.rb']
+benchmarks = macros + ['benchmarks/geomean.rb']
 
 results_dir = ARGV.fetch(0)
 
