@@ -31,7 +31,7 @@ results = files.to_h { |file|
 }
 
 # base = results.keys.first
-base = results.keys.find { |desc| desc.include?('ruby 3.0.2') }
+base = results.keys.find { |desc| desc.include?('ruby 3.1.0') }
 base_stats = stats(results[base])
 
 puts "\tspeedup\tmedian\taverage\t[min   -   max]"
