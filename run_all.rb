@@ -16,13 +16,9 @@ else
   harness = './harness-warmup'
 end
 
-RETRY = 2
+RETRY = dry_run ? 1 : 2
 
-yjit = (defined?(YJIT) && YJIT.enabled?) || (defined?(RubyVM::YJIT) && RubyVM::YJIT.enabled?)
-if yjit
-  raise 'RUBY_YJIT_ENABLE should be set for YJIT' unless ENV['RUBY_YJIT_ENABLE'] == 'true'
-end
-
+puts
 puts "Benchmarking #{RUBY_DESCRIPTION}"
 puts "harness: #{harness}, dry-run: #{dry_run}"
 
@@ -42,6 +38,7 @@ benchmarks.each do |benchmark|
     File.basename(benchmark, '.rb')
   end
 
+  puts
   if exclude.include?(benchmark_name)
     puts "Skipping #{benchmark_name}"
   else
@@ -55,7 +52,7 @@ benchmarks.each do |benchmark|
       ruby_name = "truffleruby-#{$2.downcase}-#{$1.downcase}"
     else
       ruby_name = "#{RUBY_ENGINE}-#{RUBY_ENGINE_VERSION}"
-      ruby_name += '-yjit' if yjit
+      ruby_name += '-yjit' if defined?(RubyVM::YJIT) && RubyVM::YJIT.enabled?
       ruby_name += '-mjit' if defined?(RubyVM::MJIT) && RubyVM::MJIT.enabled?
     end
 
