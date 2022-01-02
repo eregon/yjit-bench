@@ -62,7 +62,7 @@ benchmarks.each do |benchmark|
     retries = RETRY
     begin
       retries -= 1
-      result = system 'ruby', "-I#{harness}", script
+      result = system 'ruby', "-I#{harness}", File.realpath(script)
       puts "#{script} failed!" unless result
     end while !result and retries > 0
     unless result
