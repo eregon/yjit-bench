@@ -16,6 +16,7 @@ benchmarks.each do |benchmark|
   puts benchmark_name
 
   files = Dir["#{results_dir}/#{benchmark_name}/results-*"]
+  Dir.mkdir 'graphs' unless Dir.exist? 'graphs'
   out_file = "graphs/#{benchmark_name}"
   system 'python3', 'plot_benchmark.py', '--out_file', out_file, *files, exception: true
 end
