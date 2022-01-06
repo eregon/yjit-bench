@@ -1,4 +1,4 @@
-require_relative 'harness-warmup/stats'
+require_relative 'misc/stats'
 
 macros = Dir["benchmarks/*/benchmark.rb"].sort
 benchmarks = macros
