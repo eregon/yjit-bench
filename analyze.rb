@@ -1,14 +1,4 @@
-def stats(data)
-  sorted = data.sort
-  if data.size.odd?
-    median = sorted[sorted.size / 2]
-  else
-    median = sorted[sorted.size / 2 - 1, 2].sum / 2
-  end
-  avg = sorted.sum / sorted.size.to_f
-  min, max = sorted.minmax
-  [median, avg, min, max]
-end
+require_relative 'harness-warmup/stats'
 
 files = ARGV
 files = files.sort_by { |file|
@@ -32,14 +22,17 @@ results = files.to_h { |file|
 
 # base = results.keys.first
 base = results.keys.find { |desc| desc.include?('ruby 3.1.0') }
-base_stats = stats(results[base])
+base_median = Stats.new(results[base]).median
 
 puts "\tspeedup\tmedian\taverage\t[min   -   max]"
 results.map { |name, samples|
   # Take the second half of results, the first half is warmup
-  data = samples[samples.size/2..-1]
-  median, avg, min, max = stats(data)
-  speedup = base_stats[0] / median
+  times = samples[samples.size/2..-1]
+  stats = Stats.new(times)
+  median = stats.median
+  avg = stats.mean
+  min, max = stats.min, stats.max
+  speedup = base_median / median
   f = '%.3f'
   puts "#{name}\n\t#{'%.2f' % speedup}x\t#{f % median}\t#{f % avg}\t[#{f % min} - #{f % max}]"
 }
