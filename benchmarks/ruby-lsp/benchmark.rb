@@ -10,6 +10,8 @@ require "ruby_lsp/internal"
 file_path = File.expand_path("fixture.rb", __dir__)
 file_uri = "file://#{file_path}"
 
+GC::Profiler.enable
+
 # These benchmarks are representative of the three main operations executed by the Ruby LSP server
 run_benchmark(10) do
   # File parsing
@@ -23,4 +25,9 @@ run_benchmark(10) do
     document,
     encoder: RubyLsp::Requests::Support::SemanticTokenEncoder.new,
   ).run
+
+  GC::Profiler.report
+  GC::Profiler.clear
 end
+
+p GC::Profiler.total_time
