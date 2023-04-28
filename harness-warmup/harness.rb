@@ -18,12 +18,11 @@ def monotonic_time
   Process.clock_gettime(Process::CLOCK_MONOTONIC)
 end
 
-def print_stats(times, elapsed)
+def print_stats(counted, elapsed)
   min, sec = elapsed.floor.divmod(60)
   puts "Benchmarking took #{min} minutes #{sec} seconds"
   puts "Statistics for the second half of iterations (considered warmed up):"
-  warmed_up = times[times.size/2..-1]
-  stats = Stats.new(warmed_up)
+  stats = Stats.new(counted)
   median = stats.median
   mad = stats.median_absolute_deviation(median)
   mean, stddev = stats.mean, stats.stddev
@@ -63,7 +62,8 @@ def run_benchmark(num_itrs_hint)
     end
   end until times.size >= MIN_ITERS and elapsed >= MIN_TIME and mad <= threshold
 
-  return_results(times)
+  warmup, counted = times[0...times.size/2], times[times.size/2..-1]
+  return_results(warmup, counted)
 
-  print_stats(times, elapsed)
+  print_stats(counted, elapsed)
 end
