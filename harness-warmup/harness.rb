@@ -63,7 +63,7 @@ def run_benchmark(num_itrs_hint)
     end
   end until times.size >= MIN_ITERS and elapsed >= MIN_TIME and mad <= threshold
 
-  return_results(times)
+  return_results(times, times.size/2)
 
   print_stats(times, elapsed)
 end

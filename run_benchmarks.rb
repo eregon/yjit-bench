@@ -12,8 +12,6 @@ require 'etc'
 require 'yaml'
 require_relative 'misc/stats'
 
-WARMUP_ITRS = Integer(ENV.fetch('WARMUP_ITRS', 15))
-
 # Check which OS we are running
 def os
   @os ||= (
@@ -207,6 +205,7 @@ end
 # Run all the benchmarks and record execution times
 def run_benchmarks(ruby:, ruby_description:, categories:, name_filters:, out_path:, harness:, pre_init:, rss:, no_pinning:)
   bench_times = {}
+  bench_warmup = {}
   bench_rss = {}
 
   # Get the list of benchmark files/directories matching name filters
@@ -233,7 +232,6 @@ def run_benchmarks(ruby:, ruby_description:, categories:, name_filters:, out_pat
     # Set up the environment for the benchmarking command
     result_json_path = File.join(out_path, "temp#{Process.pid}.json")
     ENV["RESULT_JSON_PATH"] = result_json_path
-    ENV["WARMUP_ITRS"] = WARMUP_ITRS.to_s
 
     # Set up the benchmarking command
     cmd = []
@@ -283,9 +281,10 @@ def run_benchmarks(ruby:, ruby_description:, categories:, name_filters:, out_pat
     end
     # Convert times to ms
     bench_times[bench_name] = out_data["values"].map { |v| 1000 * Float(v) }
+    bench_warmup[bench_name] = out_data["warmup"]
   end
 
-  return bench_times, bench_rss
+  return bench_times, bench_warmup, bench_rss
 end
 
 # Default values for command-line arguments
@@ -401,9 +400,10 @@ end
 # Benchmark with and without YJIT
 bench_start_time = Time.now.to_f
 bench_times = {}
+bench_warmup = {}
 bench_rss = {}
 args.executables.each do |name, executable|
-  bench_times[name], bench_rss[name] = run_benchmarks(
+  bench_times[name], bench_warmup[name], bench_rss[name] = run_benchmarks(
     ruby: executable,
     ruby_description: ruby_descriptions[name],
     categories: args.categories,
@@ -423,7 +423,8 @@ puts("Total time spent benchmarking: #{bench_total_time}s")
 puts
 
 # Table for the data we've gathered
-base_name, *other_names = args.executables.keys
+all_names = args.executables.keys
+base_name, *other_names = all_names
 table  = [["bench", "#{base_name} (ms)", "stddev (%)"]]
 format =  ["%s",    "%.1f",              "%.1f"]
 if args.rss
@@ -449,15 +450,14 @@ end
 
 # Format the results table
 bench_names.each do |bench_name|
-  other_ts = other_names.map { |other_name| bench_times[other_name][bench_name] }
-  other_rsss = other_names.map { |other_name| bench_rss[other_name][bench_name] }
-  base_t = bench_times[base_name][bench_name]
-  base_rss = bench_rss[base_name][bench_name]
+  t0s = all_names.map { |name| bench_times[name][bench_name][0] }
+  times_no_warmup = all_names.map { |name| bench_times[name][bench_name][bench_warmup[name][bench_name]..] }
+  rsss = all_names.map { |name| bench_rss[name][bench_name] }
 
-  other_t0s = other_ts.map { |other_t| other_t[0] }
-  other_ts = other_ts.map { |other_t| other_t[WARMUP_ITRS..] }
-  base_t0 = base_t[0]
-  base_t = base_t[WARMUP_ITRS..]
+  base_t0, *other_t0s = t0s
+  base_t, *other_ts = times_no_warmup
+  base_rss, *other_rsss = rsss
+
   ratio_1sts = other_t0s.map { |other_t0| base_t0 / other_t0 }
   ratios = other_ts.map { |other_t| mean(base_t) / mean(other_t) }
 
