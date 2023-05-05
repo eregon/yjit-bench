@@ -212,6 +212,7 @@ def run_benchmarks(ruby:, ruby_description:, categories:, name_filters:, out_pat
   bench_files = Dir.children('benchmarks').sort.filter do |entry|
     match_filter(entry, categories: categories, name_filters: name_filters)
   end
+  bench_files -= %w[liquid-c] if ruby_description.start_with?('jruby ')
 
   if pre_init
     pre_init = expand_pre_init(pre_init)
