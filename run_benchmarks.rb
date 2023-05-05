@@ -250,7 +250,7 @@ def run_benchmarks(ruby:, ruby_description:, categories:, name_filters:, out_pat
       *ruby,
       "-I", harness,
       *pre_init,
-      script_path,
+      File.expand_path(script_path),
     ].compact
 
     # When the Ruby running this script is not the first Ruby in PATH, shell commands
