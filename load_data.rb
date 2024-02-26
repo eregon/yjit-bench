@@ -1,8 +1,8 @@
 require 'json'
 
-data = JSON.load(File.read(ARGV.fetch(0)))
-ruby_descriptions = data.delete("metadata")
-rss = data.delete("rss")
+json = JSON.load(File.read(ARGV.fetch(0)))
+ruby_descriptions = json.fetch("metadata")
+data = json.fetch("raw_data")
 benchmarks = data.first.last.keys
 
 order = data.keys
@@ -21,5 +21,4 @@ DATA = {
   ruby_descriptions: ruby_descriptions,
   benchmarks: benchmarks,
   data: data,
-  rss: rss,
 }
