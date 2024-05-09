@@ -19,7 +19,7 @@ benchmarks.each do |bench|
       # Take the second half of results, the first half is warmup
       # times = samples[samples.size/2..-1]
       times = result.fetch("bench")
-      raise unless times.size >= result.fetch("warmup").size
+      raise unless result.fetch("warmup").size >= times.size - 1
       stats = Stats.new(times)
       median = stats.median
       avg = stats.mean
@@ -28,7 +28,7 @@ benchmarks.each do |bench|
       f = '%6.2f'
       puts "#{ruby.ljust(longest_ruby)} #{'%.2f' % speedup}x\t#{f % median}\t#{f % avg}\t[#{f % min} - #{f % max}]"
     else
-      puts "#{ruby.ljust(longest_ruby)} FAILED"
+      puts "#{ruby.ljust(longest_ruby)} ---------------- FAILED -----------------"
     end
   }
 end
