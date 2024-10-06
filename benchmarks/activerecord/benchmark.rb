@@ -1,3 +1,11 @@
+puts
+puts "Starting activerecord benchmark with:"
+puts "PID: #{Process.pid}"
+puts "$LOAD_PATH", $LOAD_PATH
+puts "Dir.pwd: #{Dir.pwd}"
+puts "RUBY_DESCRIPTION: #{RUBY_DESCRIPTION}"
+puts
+
 require_relative "../../harness/loader"
 
 Dir.chdir __dir__

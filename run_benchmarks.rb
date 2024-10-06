@@ -310,7 +310,7 @@ end
 # Default values for command-line arguments
 args = OpenStruct.new({
   executables: {},
-  out_path: "./data",
+  out_path: "#{Dir.pwd}/data",
   out_override: nil,
   harness: "harness",
   yjit_opts: "",

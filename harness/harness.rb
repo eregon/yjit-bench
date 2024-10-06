@@ -1,5 +1,7 @@
 require_relative "./harness-common"
 
+raise "should not reach here"
+
 # Warmup iterations
 WARMUP_ITRS = Integer(ENV.fetch('WARMUP_ITRS', 15))
 
