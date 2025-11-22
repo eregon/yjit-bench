@@ -58,7 +58,6 @@ jobs:
           WARMUP_ITRS: '1'
           MIN_BENCH_ITRS: '1'
           MIN_BENCH_TIME: '0'
-        continue-on-error: ${{ matrix.ruby == 'truffleruby' }}
 
   benchmark-ractor:
     runs-on: ubuntu-latest
