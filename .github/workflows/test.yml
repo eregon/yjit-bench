@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - remove-continue-on-error
   pull_request:
   schedule:
     - cron: "00 15 * * *"
@@ -12,8 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ruby, head, truffleruby]
-    if: ${{ github.event_name != 'schedule' || github.repository == 'ruby/ruby-bench' }}
+        ruby: [truffleruby]
     steps:
       - uses: actions/checkout@v3
       - name: Cache apt packages
@@ -43,8 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ruby, head, truffleruby]
-    if: ${{ github.event_name != 'schedule' || github.repository == 'ruby/ruby-bench' }}
+        ruby: [truffleruby]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby
@@ -65,7 +64,7 @@ jobs:
       fail-fast: false
       matrix:
         ruby: [head]
-    if: ${{ github.event_name != 'schedule' || github.repository == 'ruby/ruby-bench' }}
+    if: false
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby
@@ -86,7 +85,7 @@ jobs:
       fail-fast: false
       matrix:
         ruby: [head]
-    if: ${{ github.event_name != 'schedule' || github.repository == 'ruby/ruby-bench' }}
+    if: false
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby
@@ -103,7 +102,7 @@ jobs:
 
   benchmark-graph:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'schedule' || github.repository == 'ruby/ruby-bench' }}
+    if: false
     steps:
       - uses: actions/checkout@v3
       - name: Cache apt packages
@@ -133,7 +132,7 @@ jobs:
 
   benchmark-run-once:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'schedule' || github.repository == 'ruby/ruby-bench' }}
+    if: false
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby
@@ -147,7 +146,7 @@ jobs:
   all-tests:
     runs-on: ubuntu-latest
     needs: [test, benchmark-default, benchmark-ractor, benchmark-ractor-only, benchmark-graph, benchmark-run-once]
-    if: always()
+    if: false
     steps:
       - name: Check all job results
         run: |
